@@ -19,7 +19,6 @@ export async function POST(req) {
       body: JSON.stringify({
         model: process.env.OLLAMA_MODEL ?? "phi3",
         messages: [{ role: "user", content: message }],
-        stream: false,
       }),
     });
 
