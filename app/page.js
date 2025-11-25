@@ -8,20 +8,29 @@ export default function Home() {
 
   async function sendMessage() {
     if (!input.trim()) return;
-
+  
     const res = await fetch("/api/chat", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: input }),
     });
-
+  
+    if (!res.ok) {
+      // handle API errors gracefully
+      const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+      setMessages(prev => [...prev, { role: "user", content: input }, { role: "assistant", content: err.error ?? "Error from API" }]);
+      setInput("");
+      return;
+    }
+  
     const data = await res.json();
-
+  
     setMessages((prev) => [
       ...prev,
       { role: "user", content: input },
       data,
     ]);
-
+  
     setInput("");
   }
 

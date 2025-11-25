@@ -1,15 +1,14 @@
+// app/api/chat/route.js
+import { NextResponse } from "next/server";
+
 export async function POST(req) {
   try {
     const { message } = await req.json();
     if (!message || !message.trim()) {
-      return Response.json(
-        { error: "Message is required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Message is required." }, { status: 400 });
     }
 
-    const endpoint =
-      process.env.OLLAMA_ENDPOINT ?? "http://localhost:11434";
+    const endpoint = process.env.OLLAMA_ENDPOINT ?? "http://localhost:11434";
 
     const ollamaResponse = await fetch(`${endpoint}/api/chat`, {
       method: "POST",
@@ -25,7 +24,7 @@ export async function POST(req) {
 
     if (!ollamaResponse.ok) {
       const errorText = await ollamaResponse.text();
-      return Response.json(
+      return NextResponse.json(
         { error: `Ollama request failed: ${errorText}` },
         { status: 500 }
       );
@@ -37,14 +36,14 @@ export async function POST(req) {
       data?.choices?.[0]?.message?.content ??
       "";
 
-    return Response.json({
+    return NextResponse.json({
       role: "assistant",
       content: reply,
       raw: data,
     });
   } catch (err) {
-    return Response.json(
-      { error: err.message ?? "Unexpected error" },
+    return NextResponse.json(
+      { error: err?.message ?? "Unexpected error" },
       { status: 500 }
     );
   }
