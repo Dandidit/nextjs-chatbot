@@ -13,7 +13,10 @@ export async function POST(req) {
 
     const ollamaResponse = await fetch(`${endpoint}/api/chat`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
       body: JSON.stringify({
         model: process.env.OLLAMA_MODEL ?? "phi3",
         messages: [{ role: "user", content: message }],
